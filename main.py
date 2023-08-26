@@ -1,7 +1,7 @@
 from PIL import Image
 import os, sys
 
-import content
+import content, namecheck
 
 set_images = content.container.images.items
 set_spritesets = content.container.spritesets.items
@@ -14,6 +14,12 @@ print("images ~ " + str(len(set_images)))
 print("spritesets ~ " + str(len(set_spritesets)))
 print("sprites ~ " + str(len(set_sprites)))
 print("------------")
+
+inputPath = "inputs/{}".format(sys.argv[1])
+outputPath = "outputs/{}".format(sys.argv[1])
+
+if os.path.exists(inputPath) == False:
+  sys.exit(inputPath + " does not exist. Make sure your designated folder is spelled correctly, or is present inside the inputs folder.")
 
 for index in range(len(set_images)):
   imageIndex = set_images[index]
@@ -32,18 +38,24 @@ for index in range(len(set_images)):
   divY = set_spritesets[index].gridy.value
 
   try:
-    images_list.append(Image.open("images/" + imageFilename))
+    images_list.append(Image.open("{}/{}".format(inputPath, imageFilename)))
   except:
-    print("You are missing " + str(imageFilename) + ". A copy is located inside the images folder, or inside DDNet's data folder.")
-    break
+    sys.exit("You are missing " + str(imageFilename) + ". A copy is located inside the images folder, or inside DDNet\'s data folder.")
 
   width, height = images_list[index].size
 
   if width == 0 or width % divX != 0 or height == 0 or height % divY != 0:
     print("The width of texture {} is not divisible by {}, or the height is not divisible by {}, which might cause visual bugs.".format(imageName, divX, divY))
 
+if os.path.exists("outputs") == False:
+  os.makedirs("outputs")
+
+outputPath = namecheck.checkDuplicates(outputPath)
+os.makedirs(outputPath)
+
+
 for index in folders_list:
-  newPath = "images/split/" + index
+  newPath = outputPath + "/" + index
   os.makedirs(newPath)
 
 for index in range(len(set_sprites)):
@@ -57,7 +69,7 @@ for index in range(len(set_sprites)):
 
   if set_spritesets[currentImage].gridx.value == 1 or set_spritesets[currentImage].gridy.value == 1:
       try:
-        images_list[currentImage].save("images/split/{}/{}".format(spriteIndex.location.value, imageName))
+        images_list[currentImage].save("{}/{}/{}".format(outputPath, spriteIndex.location.value, imageName))
       except:
         print("{} failed to export.".format(imageName))
         break
@@ -77,7 +89,7 @@ for index in range(len(set_sprites)):
   croppedImage = images_list[currentImage].crop(cropBox)
 
   try:
-    croppedImage.save("images/split/{}/{}.png".format(spriteIndex.location.value, spriteIndex.name.value))
+    croppedImage.save("{}/{}/{}.png".format(outputPath, spriteIndex.location.value, spriteIndex.name.value))
   except:
     print("{} failed to export.".format(imageName))
     break

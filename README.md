@@ -2,7 +2,7 @@ Introduction
 ------------
 This is a tool to automatically slice and crop images from the [DDNet](https://github.com/ddnet/ddnet) assets files into their own, packaged asset bunch.
 
-In its current state, this is merely a proof-of-concept! It only crops images and sorts them into non-compressed folders. In the future there will be tools to help split images in a more tidy sense.
+In its current state, this is merely a proof-of-concept! It only crops images and sorts them into non-compressed folders. In the future there will be ZIP compression and merging of packs.
 
 Dependancies
 ------------
@@ -17,17 +17,17 @@ If on MacOS, full instructions will be avalable [on the official website.](https
 
 How to use
 ----------
-Make sure there are no already split images inside the `images/split` folder (I have yet to run tests for that.)
-Then, run in the command line:
+Make sure you have a folder inside `inputs` containing all the images needed. An example folder named `inputs/defaults` exists for reference.
+Then, run in the command line, where NAMEOFFOLDER is the name of the folder you want to slice up:
 
-    python main.py
+    python main.py NAMEOFFOLDER
 
-It should split all the image altases into their own assets! If any images are missing, a copy is located inside the images folder, or inside DDNet's data folder. Don't forget to check `data/editor` for any images from there!
+It should split all the image altases into their own assets, and output a folder of the same name inside `outputs`! If any images are missing, a copy is located inside the `inputs/defaults` folder, or inside DDNet's data folder. Don't forget to check `data/editor` for any images from there!
 
 TODO
 ----
-* Create a new folder for each run
-* Accept other folders as input
+* ~~Create a new folder for each run~~
+* ~~Accept other folders as input~~
 * Compress into a ZIP, maybe?
 * Allow for seperate images to be split
 * Allow the rebuilding of already split assets
