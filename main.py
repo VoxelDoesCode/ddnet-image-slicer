@@ -1,7 +1,9 @@
 from PIL import Image
-import os, sys
+import os, sys, zipfile
 
 import content, namecheck
+
+baseDirectory = os.getcwd()
 
 set_images = content.container.images.items
 set_spritesets = content.container.spritesets.items
@@ -16,7 +18,7 @@ print("sprites ~ " + str(len(set_sprites)))
 print("------------")
 
 inputPath = "inputs/{}".format(sys.argv[1])
-outputPath = "outputs/{}".format(sys.argv[1])
+outputPath = namecheck.checkDuplicates("outputs/{}".format(sys.argv[1]))
 
 if os.path.exists(inputPath) == False:
   sys.exit(inputPath + " does not exist. Make sure your designated folder is spelled correctly, or is present inside the inputs folder.")
@@ -50,13 +52,12 @@ for index in range(len(set_images)):
 if os.path.exists("outputs") == False:
   os.makedirs("outputs")
 
-outputPath = namecheck.checkDuplicates(outputPath)
 os.makedirs(outputPath)
 
+os.chdir(baseDirectory + "\\" + outputPath.replace("/", "\\"))
 
 for index in folders_list:
-  newPath = outputPath + "/" + index
-  os.makedirs(newPath)
+  os.makedirs(index)
 
 for index in range(len(set_sprites)):
   spriteIndex = set_sprites[index]
@@ -69,7 +70,7 @@ for index in range(len(set_sprites)):
 
   if set_spritesets[currentImage].gridx.value == 1 or set_spritesets[currentImage].gridy.value == 1:
       try:
-        images_list[currentImage].save("{}/{}/{}".format(outputPath, spriteIndex.location.value, imageName))
+        images_list[currentImage].save("{}/{}".format(spriteIndex.location.value, imageName))
       except:
         print("{} failed to export.".format(imageName))
         break
@@ -89,7 +90,12 @@ for index in range(len(set_sprites)):
   croppedImage = images_list[currentImage].crop(cropBox)
 
   try:
-    croppedImage.save("{}/{}/{}.png".format(outputPath, spriteIndex.location.value, spriteIndex.name.value))
+    croppedImage.save("{}/{}.png".format(spriteIndex.location.value, spriteIndex.name.value))
   except:
-    print("{} failed to export.".format(imageName))
-    break
+    sys.exit("{} failed to export.".format(imageName))
+
+with zipfile.ZipFile("{}.zip".format(sys.argv[1]), "w") as assetPack:
+  for index in folders_list:
+    assetPack.write("{}".format(index))
+
+os.chdir(baseDirectory)

@@ -11,4 +11,4 @@ def checkDuplicates(name):
     if duplicates >= 16:
       sys.exit("{} has too many duplicate names. Please rename your folder to something different.".format(sys.argv[1]))
     else:
-      return name + " ({})".format(duplicates)
+      return name + "-({})".format(duplicates)
