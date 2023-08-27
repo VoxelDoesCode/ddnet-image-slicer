@@ -96,6 +96,9 @@ for index in range(len(set_sprites)):
 
 with zipfile.ZipFile("{}.zip".format(sys.argv[1]), "w") as assetPack:
   for index in folders_list:
-    assetPack.write("{}".format(index))
+    assetPack.write(index)
+
+    for file in os.listdir(index):
+      assetPack.write("{}/{}".format(index, file))
 
 os.chdir(baseDirectory)
